@@ -9,10 +9,10 @@ import java.util.Random;
  *  generate Random number with border
  */
  public class myRandom {
-    static public int random(int min,int max)
+    public double random(double min,double max)
     {
         Random generater = new Random();
-        return generater.nextInt(max-min+1)+min;
+        return generater.nextDouble()*(max-min)+min;
     }
     public myRandom()
     {
