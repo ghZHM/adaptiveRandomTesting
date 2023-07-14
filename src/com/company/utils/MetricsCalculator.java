@@ -1,5 +1,8 @@
 package com.company.utils;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -51,5 +54,17 @@ public class MetricsCalculator {
         ret.put("diversity",diversity);
         ret.put("dispersion",dispersion);
         return ret;
+    }
+
+    public void metricsOutput(List<HashMap> metricsList, List timeList, List FmeasureList,String filename) throws IOException {
+        String metricOutput = "Run, F-measure, Diversity, Divergence, Dispersion, generationTime \n";
+        for(int i=0;i<metricsList.size();i++) // get every class from the HashMap
+        {
+            BufferedWriter fw = new BufferedWriter(new FileWriter(filename));
+            metricOutput+=i+","+ FmeasureList.get(i)+","+metricsList.get(i).get("diversity")+","+metricsList.get(i).get("divergence")+","+metricsList.get(i).get("dispersion")+","+timeList.get(i)+"\n";
+            fw.write(metricOutput);
+            fw.flush();
+            fw.close();
+        }
     }
 }
