@@ -1,13 +1,12 @@
 package com.company;
 
 
+import com.company.partition.StaticPartition;
 import com.company.selectFromCandidate.TestCaseSelection;
 import com.company.selectFromCandidate.candidateSetGenerator;
 import com.company.utils.MetricsCalculator;
 import com.company.utils.myRandom;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
@@ -49,6 +48,10 @@ public class Main {
         List<Integer> selectFromCandidateFmeasureList = new LinkedList<>();
         List<Long> selectFromCandidateGenerateTime = new LinkedList<>();
         List<HashMap> selectFromCandidateMetricsList = new LinkedList<>();
+        //partitioning strategy
+        List<Integer> partitionFmeasureList = new LinkedList<>();
+        List<Long> partitionGenerateTime = new LinkedList<>();
+        List<HashMap> partitionMetricsList = new LinkedList<>();
 
         // multiple run
         int runCount=0;
@@ -104,12 +107,24 @@ public class Main {
             System.out.println("No."+runCount+" , F-measure: "+executedSet.size());
             System.out.println("Diversity: "+metrics.get("diversity")+"\n divergence: "+metrics.get("divergence")+" \n dispersion:"+metrics.get("dispersion"));
             selectFromCandidateMetricsList.add(metrics);
+
+            // partitioning strategy
+            long partitionStartTime = System.currentTimeMillis();
+            StaticPartition myPartition = new StaticPartition(23);
+            HashSet<Double> executedSetPartition =  myPartition.generator(Xmin,Xmax,Ymin,Ymax,centerX,centerY,edge);
+            partitionGenerateTime.add(System.currentTimeMillis()-partitionStartTime);
+            HashMap partitionMetric = calculator.getMetrics(executedSetPartition);
+            partitionMetricsList.add(partitionMetric);
+            partitionFmeasureList.add(executedSetPartition.size());
+
+
             runCount++;
         }
 
         //write metrics into a csv file.
         calculator.metricsOutput(baselineMetricsList,baselineGenerateTime,baselineFmeasureList,"baselineMetrics.csv");
-        calculator.metricsOutput(selectFromCandidateMetricsList,selectFromCandidateGenerateTime,selectFromCandidateFmeasureList,"metricsOfSelect.csv");
+        calculator.metricsOutput(selectFromCandidateMetricsList,selectFromCandidateGenerateTime,selectFromCandidateFmeasureList,"selectMetrics.csv");
+        calculator.metricsOutput(partitionMetricsList,partitionGenerateTime,partitionFmeasureList,"partitionMetrics.csv");
 
 
     }
