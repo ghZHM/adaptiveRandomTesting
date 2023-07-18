@@ -2,6 +2,7 @@ package com.company;
 
 
 import com.company.partition.StaticPartition;
+import com.company.searchBased.HillClimbing;
 import com.company.selectFromCandidate.TestCaseSelection;
 import com.company.selectFromCandidate.candidateSetGenerator;
 import com.company.utils.MetricsCalculator;
@@ -52,11 +53,16 @@ public class Main {
         List<Integer> partitionFmeasureList = new LinkedList<>();
         List<Long> partitionGenerateTime = new LinkedList<>();
         List<HashMap> partitionMetricsList = new LinkedList<>();
+        //search based
+        List<Integer> searchBasedFmeasureList = new LinkedList<>();
+        List<Long> searchBasedGenerateTime = new LinkedList<>();
+        List<HashMap> searchBasedMetricsList = new LinkedList<>();
 
         // multiple run
         int runCount=0;
         while(runCount<30)
         {
+            System.out.println("Run No."+runCount);
             //baseline
             long baselineTime = System.currentTimeMillis();
             HashSet<List> baselineSet = new HashSet<>();
@@ -74,13 +80,11 @@ public class Main {
                 double tempY = temp.get(1);
                 if (!updateExecutedSet(centerX, centerY, edge, baselineSet, tempX, tempY)) break;
             }
-            System.out.println("Recording metrics of run No."+runCount);
             baselineGenerateTime.add(System.currentTimeMillis()-baselineTime);
             baselineMetricsList.add(calculator.getMetrics(baselineSet));
             baselineFmeasureList.add(baselineSet.size());
 
             //Select from Candidate
-            // Execute Set init
             long curTime = System.currentTimeMillis();
             HashSet<List> executedSet= new HashSet<>();
             while (true)
@@ -89,8 +93,7 @@ public class Main {
                 double tcY = myRandomInstance.random(Ymin,Ymax);
                 if (updateExecutedSet(centerX, centerY, edge, executedSet, tcX, tcY)) break;
             }
-            // one run-generation in loop
-            System.out.println("generating test cases via select from candidate.");
+            System.out.println("select from candidate.");
             while(true)
             {
                 HashSet<List> candidate = cSetGenerator.uniformDistribution(Xmin,Xmax,Ymin,Ymax);
@@ -99,16 +102,14 @@ public class Main {
                 double tcY = testCase.get(1);
                 if (!updateExecutedSet(centerX, centerY, edge, executedSet, tcX, tcY)) break;
             }
-            // calculate and record metrics
+//            // calculate and record metrics
             selectFromCandidateGenerateTime.add(System.currentTimeMillis()-curTime);
             selectFromCandidateFmeasureList.add(executedSet.size());
-            System.out.println("Start to calculate metrics.");
             HashMap metrics=calculator.getMetrics(executedSet);
-            System.out.println("No."+runCount+" , F-measure: "+executedSet.size());
-            System.out.println("Diversity: "+metrics.get("diversity")+"\n divergence: "+metrics.get("divergence")+" \n dispersion:"+metrics.get("dispersion"));
             selectFromCandidateMetricsList.add(metrics);
 
             // partitioning strategy
+            System.out.println("Partitioning based strategy");
             long partitionStartTime = System.currentTimeMillis();
             StaticPartition myPartition = new StaticPartition(23);
             HashSet<Double> executedSetPartition =  myPartition.generator(Xmin,Xmax,Ymin,Ymax,centerX,centerY,edge);
@@ -117,6 +118,14 @@ public class Main {
             partitionMetricsList.add(partitionMetric);
             partitionFmeasureList.add(executedSetPartition.size());
 
+            // Search based
+            System.out.println("Hill Climbing");
+            long hcStartTime = System.currentTimeMillis();
+            HillClimbing hillClimbing = new HillClimbing(Xmin,Xmax,Ymin,Ymax);
+            HashSet<List> executedSetSearch = hillClimbing.runHillClimbing(Xmin,Xmax,Ymin,Ymax,centerX,centerY,edge);
+            searchBasedGenerateTime.add(System.currentTimeMillis()-hcStartTime);
+            searchBasedFmeasureList.add(executedSetSearch.size());
+            searchBasedMetricsList.add(calculator.getMetrics(executedSetSearch));
 
             runCount++;
         }
@@ -125,6 +134,7 @@ public class Main {
         calculator.metricsOutput(baselineMetricsList,baselineGenerateTime,baselineFmeasureList,"baselineMetrics.csv");
         calculator.metricsOutput(selectFromCandidateMetricsList,selectFromCandidateGenerateTime,selectFromCandidateFmeasureList,"selectMetrics.csv");
         calculator.metricsOutput(partitionMetricsList,partitionGenerateTime,partitionFmeasureList,"partitionMetrics.csv");
+        calculator.metricsOutput(searchBasedMetricsList,searchBasedGenerateTime,searchBasedFmeasureList,"searchBasedMetrics.csv");
 
 
     }

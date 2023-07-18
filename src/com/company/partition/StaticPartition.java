@@ -7,7 +7,9 @@ import java.util.*;
 /**
  * @Author Haoming Zeng
  * @Date 2023/7/16 20:25
- * @classDescribe implement Static Partition testing strategy
+ * @classDescribe implement Static Partition testing strategy proposed by Sabor K K, Thiel S.
+ * Adaptive random testing by static partitioning[C]
+ * 2015 IEEE/ACM 10th International Workshop on Automation of Software Test. IEEE, 2015: 28-32.
  */
 public class StaticPartition {
     private int p; // divide the input area into p*p cells
@@ -38,7 +40,6 @@ public class StaticPartition {
         HashSet<List> executedSet = new HashSet<>();
         while(true)
         {
-            System.out.println(whiteCells.size());
             List<Double> temp = new ArrayList();
             if(whiteCells.size()>0)
             {
@@ -133,6 +134,7 @@ public class StaticPartition {
             int xr = (int)(cellX)+1;
             int yu = (int)(cellY)+1;
             int yd = (int)(cellY)-1;
+            //deal with surrounding cells
             cellHelper(xl+"-"+yu);
             cellHelper(xr+"-"+yu);
             cellHelper(xl+"-"+yd);

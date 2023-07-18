@@ -26,7 +26,6 @@ public class MetricsCalculator {
             flatSet[pos] = (List) iterator.next();
             pos++;
         }
-        System.out.println("Copy complete, start to traverse");
         for(int i=0;i<flatSet.length;i++)
         {
             double nearestNeighbor = Double.MAX_VALUE;
