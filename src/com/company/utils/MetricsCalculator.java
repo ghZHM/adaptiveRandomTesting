@@ -49,8 +49,13 @@ public class MetricsCalculator {
             }
         }
         HashMap<String,Double> ret = new HashMap<>();
+        diversity = diversity/flatSet.length;
+        if(flatSet.length>1)
+        {
+            divergence = divergence/(flatSet.length*(flatSet.length-1)/2);
+        }
         ret.put("divergence",divergence);
-        ret.put("diversity",diversity);
+        ret.put("diversity",diversity/flatSet.length);
         ret.put("dispersion",dispersion);
         return ret;
     }

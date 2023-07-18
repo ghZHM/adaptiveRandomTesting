@@ -13,17 +13,16 @@ import java.util.*;
 
 public class Main {
 
-    static float failureRate = (float) 0.002;
+    static float failureRate = (float) 0.005;
     static double Xmin = 0;
     static double Xmax = Integer.MAX_VALUE;
     static double Ymin = 0;
     static double Ymax = Integer.MAX_VALUE;
     public static void main(String[] args) throws IOException {
         myRandom myRandomInstance = new myRandom();
-        candidateSetGenerator cSetGenerator = new candidateSetGenerator();
-        TestCaseSelection testCaseSelector = new TestCaseSelection();
+
         MetricsCalculator calculator = new MetricsCalculator();
-        BaselineRandomTest baseline = new BaselineRandomTest();
+
         // Generate failure area - block
         double centerX = 0;
         double centerY = 0;
@@ -65,6 +64,7 @@ public class Main {
             System.out.println("Run No."+runCount);
             //baseline
             long baselineTime = System.currentTimeMillis();
+            BaselineRandomTest baseline = new BaselineRandomTest();
             HashSet<List> baselineSet = new HashSet<>();
             while (true)
             {
@@ -86,6 +86,8 @@ public class Main {
 
             //Select from Candidate
             long curTime = System.currentTimeMillis();
+            candidateSetGenerator cSetGenerator = new candidateSetGenerator();
+            TestCaseSelection testCaseSelector = new TestCaseSelection();
             HashSet<List> executedSet= new HashSet<>();
             while (true)
             {
@@ -96,8 +98,8 @@ public class Main {
             System.out.println("select from candidate.");
             while(true)
             {
-                HashSet<List> candidate = cSetGenerator.uniformDistribution(Xmin,Xmax,Ymin,Ymax);
-                List<Double> testCase = testCaseSelector.maximumDistanceBased(candidate,executedSet);
+                HashSet<List> candidate = cSetGenerator.nonUniformDistribution(Xmin,Xmax,Ymin,Ymax);
+                List<Double> testCase = testCaseSelector.avgDistanceBased(candidate,executedSet);
                 double tcX = testCase.get(0);
                 double tcY = testCase.get(1);
                 if (!updateExecutedSet(centerX, centerY, edge, executedSet, tcX, tcY)) break;
