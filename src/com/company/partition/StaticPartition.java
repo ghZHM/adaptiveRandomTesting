@@ -45,40 +45,41 @@ public class StaticPartition {
             {
                 // randomly pick a cell from white cells
                 temp = selectCaseFromCells(whiteCells,Xmin,Xmax,Ymin,Ymax);
-                if(updateCells(failureX, failureY, edge, temp.get(0), temp.get(1), temp.get(2), temp.get(3), whiteCells))
+                List<Double> tc = new LinkedList<>();
+                tc.add(temp.get(0));
+                tc.add(temp.get(1));
+                executedSet.add(tc);
+                if(!updateCells(failureX, failureY, edge, temp.get(0), temp.get(1), temp.get(2), temp.get(3), whiteCells))
                 {
-                    List<Double> tc = new LinkedList<>();
-                    tc.add(temp.get(0));
-                    tc.add(temp.get(1));
-                    executedSet.add(tc);
+                    break;
                 }
-                else break;
             }
             else if(greenCells.size()>0)
             {
                 // randomly pick a cell from green cells
                 temp = selectCaseFromCells(greenCells,Xmin,Xmax,Ymin,Ymax);
-                if(updateCells(failureX, failureY, edge, temp.get(0), temp.get(1), temp.get(2), temp.get(3), greenCells))
+                List<Double> tc = new LinkedList<>();
+                tc.add(temp.get(0));
+                tc.add(temp.get(1));
+                executedSet.add(tc);
+                if(!updateCells(failureX, failureY, edge, temp.get(0), temp.get(1), temp.get(2), temp.get(3), greenCells))
                 {
-                    List<Double> tc = new LinkedList<>();
-                    tc.add(temp.get(0));
-                    tc.add(temp.get(1));
-                    executedSet.add(tc);
+                    break;
                 }
-                else break;
+
             }
             else if(yellowCells.size()>0)
             {
                 // randomly pick a cell from yellow cells
                 temp = selectCaseFromCells(yellowCells,Xmin,Xmax,Ymin,Ymax);
-                if(updateCells(failureX, failureY, edge, temp.get(0), temp.get(1), temp.get(2), temp.get(3), yellowCells))
+                List<Double> tc = new LinkedList<>();
+                tc.add(temp.get(0));
+                tc.add(temp.get(1));
+                executedSet.add(tc);
+                if(!updateCells(failureX, failureY, edge, temp.get(0), temp.get(1), temp.get(2), temp.get(3), yellowCells))
                 {
-                    List<Double> tc = new LinkedList<>();
-                    tc.add(temp.get(0));
-                    tc.add(temp.get(1));
-                    executedSet.add(tc);
+                    break;
                 }
-                else break;
             }
             else
             {

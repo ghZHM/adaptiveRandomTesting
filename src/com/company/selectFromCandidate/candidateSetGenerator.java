@@ -1,9 +1,7 @@
 package com.company.selectFromCandidate;
 
 import com.company.utils.myRandom;
-import sun.plugin.javascript.navig.Link;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;

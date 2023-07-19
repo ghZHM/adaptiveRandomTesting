@@ -13,7 +13,7 @@ import java.util.*;
 
 public class Main {
 
-    static float failureRate = (float) 0.005;
+    static float failureRate = (float) 0.01;
     static double Xmin = 0;
     static double Xmax = Integer.MAX_VALUE;
     static double Ymin = 0;
@@ -59,7 +59,7 @@ public class Main {
 
         // multiple run
         int runCount=0;
-        while(runCount<30)
+        while(runCount<500)
         {
             System.out.println("Run No."+runCount);
             //baseline
@@ -113,7 +113,7 @@ public class Main {
             // partitioning strategy
             System.out.println("Partitioning based strategy");
             long partitionStartTime = System.currentTimeMillis();
-            StaticPartition myPartition = new StaticPartition(23);
+            StaticPartition myPartition = new StaticPartition((int)Math.sqrt(1/failureRate));
             HashSet<Double> executedSetPartition =  myPartition.generator(Xmin,Xmax,Ymin,Ymax,centerX,centerY,edge);
             partitionGenerateTime.add(System.currentTimeMillis()-partitionStartTime);
             HashMap partitionMetric = calculator.getMetrics(executedSetPartition);

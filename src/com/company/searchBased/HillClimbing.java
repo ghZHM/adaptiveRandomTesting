@@ -42,6 +42,7 @@ public class HillClimbing {
                 }
                 else
                 {
+                    executedSet.add(temp);
                     flag=1;
                     break;
                 }
