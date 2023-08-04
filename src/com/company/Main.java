@@ -104,7 +104,7 @@ public class Main {
                 double tcY = testCase.get(1);
                 if (!updateExecutedSet(centerX, centerY, edge, executedSet, tcX, tcY)) break;
             }
-//            // calculate and record metrics
+            // calculate and record metrics
             selectFromCandidateGenerateTime.add(System.currentTimeMillis()-curTime);
             selectFromCandidateFmeasureList.add(executedSet.size());
             HashMap metrics=calculator.getMetrics(executedSet);

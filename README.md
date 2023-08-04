@@ -1,19 +1,18 @@
 # Adaptive Random Testing
 MSc dissertation project at the university of Sheffield: **Testing and Diversity**
 
-# Plan
-2023.6
-Read the essays, understand and select the methods to be used.
+# Overview
+1.Implement *Adaptive random testing by **static partitioning*** proposed by Sabor K K and Thiel S.
 
+2.Implement *Adaptive Random Testing incorporating a **local search technique*** by Schneckenburger C and Schweiggert F.
 
-2023.7
-7.6 discuss the experiment detail, like evaluation methods, metrics.
+3.Implement Select Test From Candidate. Distribution and Select Strategy from Candidate Set can be modify [here](https://github.com/ghZHM/adaptiveRandomTesting/blob/master/src/com/company/Main.java#L101) .
 
-Implement 3 adaptive random test methods and 1 random test method as baseline.
+And **Random Testing** as baseline.
 
-Run experiments simulation.
+The result printed in .csv contains F-measure and multiple metrics to evaluate test case distribution.
 
+# Parameter adjustment
 
-First week after experiments: decide the structure of paper and maybe a meeting.
+Failure Region is block pattern and failure rate, size of input domain can be adjust [here](https://github.com/ghZHM/adaptiveRandomTesting/blob/master/src/com/company/Main.java#L16).
 
-Remaining: finish writing the paper.
