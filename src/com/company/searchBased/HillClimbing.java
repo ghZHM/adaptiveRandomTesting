@@ -55,6 +55,37 @@ public class HillClimbing {
         return executedSet;
     }
 
+    public HashSet runHillClimbing(double Xmin,double Xmax,double Ymin,double Ymax,HashMap<String,Double> strip)
+    {
+        HashSet<List> executedSet = new HashSet<>();
+        while (true)
+        {
+            HashSet<List> underTest = testCaseGenerator(Xmin,Xmax,Ymin,Ymax);
+            Iterator iterator = underTest.iterator();
+            int flag=0;
+            while (iterator.hasNext())
+            {
+                List<Double> temp = (List<Double>) iterator.next();
+//                if (checkFailure(temp.get(0),temp.get(1),failureX,failureY,edge))
+                if (checkStrip(temp.get(0),temp.get(1),strip))
+                {
+                    executedSet.add(temp);
+                }
+                else
+                {
+                    executedSet.add(temp);
+                    flag=1;
+                    break;
+                }
+            }
+            if (flag==1)
+            {
+                break;
+            }
+        }
+        return executedSet;
+    }
+
     private HashSet testCaseGenerator(double Xmin, double Xmax, double Ymin, double Ymax)
     {
         HashSet<List> initialSet = new HashSet<>();
@@ -165,6 +196,21 @@ public class HillClimbing {
     private boolean checkFailure(double tcX, double tcY, double centerX, double centerY, double edge)
     {
         if(!((tcX>=centerX-edge/2&&tcX<=centerX+edge/2)&&(tcY>=centerY-edge/2&&tcY<=centerY+edge/2)))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean checkStrip( double tcX, double tcY, HashMap failureRegion)
+    {
+        double upper = Math.max((double) failureRegion.get("b2"), (double) failureRegion.get("b1"));
+        double lower = Math.min((double) failureRegion.get("b2"), (double) failureRegion.get("b1"));
+
+        double k = (double)failureRegion.get("k-value");
+        upper+= k*tcX;
+        lower+= k*tcX;
+        if(!(tcY>=lower&&tcY<=upper))
         {
             return true;
         }

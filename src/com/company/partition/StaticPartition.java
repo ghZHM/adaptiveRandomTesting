@@ -97,6 +97,68 @@ public class StaticPartition {
         return executedSet;
     }
 
+    public HashSet generator(double Xmin,double Xmax,double Ymin,double Ymax,HashMap<String,Double> strip)
+    {
+        HashSet<List> executedSet = new HashSet<>();
+        while(true)
+        {
+            List<Double> temp = new ArrayList();
+            if(whiteCells.size()>0)
+            {
+                // randomly pick a cell from white cells
+                temp = selectCaseFromCells(whiteCells,Xmin,Xmax,Ymin,Ymax);
+                List<Double> tc = new LinkedList<>();
+                tc.add(temp.get(0));
+                tc.add(temp.get(1));
+                executedSet.add(tc);
+                if(!updateCells(strip, temp.get(0), temp.get(1), temp.get(2), temp.get(3), whiteCells))
+                {
+                    break;
+                }
+            }
+            else if(greenCells.size()>0)
+            {
+                // randomly pick a cell from green cells
+                temp = selectCaseFromCells(greenCells,Xmin,Xmax,Ymin,Ymax);
+                List<Double> tc = new LinkedList<>();
+                tc.add(temp.get(0));
+                tc.add(temp.get(1));
+                executedSet.add(tc);
+                if(!updateCells(strip, temp.get(0), temp.get(1), temp.get(2), temp.get(3), greenCells))
+                {
+                    break;
+                }
+
+            }
+            else if(yellowCells.size()>0)
+            {
+                // randomly pick a cell from yellow cells
+                temp = selectCaseFromCells(yellowCells,Xmin,Xmax,Ymin,Ymax);
+                List<Double> tc = new LinkedList<>();
+                tc.add(temp.get(0));
+                tc.add(temp.get(1));
+                executedSet.add(tc);
+                if(!updateCells(strip, temp.get(0), temp.get(1), temp.get(2), temp.get(3), yellowCells))
+                {
+                    break;
+                }
+            }
+            else
+            {
+                redCells.clear();
+                for(int i=0;i<p;i++)
+                {
+                    for (int j=0;j<p;j++)
+                    {
+                        whiteCells.add(i+"-"+j);
+                    }
+                }
+            }
+
+        }
+        return executedSet;
+    }
+
     private List selectCaseFromCells(HashSet cellList,double Xmin,double Xmax,double Ymin,double Ymax)
     {
         // randomly pick a cell from cells
@@ -119,6 +181,36 @@ public class StaticPartition {
         ret.add(Double.valueOf(selectedCell[0]));
         ret.add(Double.valueOf(selectedCell[1]));
         return ret;
+    }
+
+    private boolean updateCells(HashMap<String,Double> strip ,double tcX, double tcY, double cellX, double cellY,HashSet cellList)
+    {
+        double upper = Math.max(strip.get("b2"), strip.get("b1"));
+        double lower = Math.min(strip.get("b2"), strip.get("b1"));
+
+        double k = strip.get("k-value");
+        upper+= k*tcX;
+        lower+= k*tcX;
+        if(!(tcY>=lower&&tcY<=upper))
+        {
+            String temp = "";
+            temp+=(int)(cellX);
+            temp+="-";
+            temp+=(int)(cellY);
+            cellList.remove(temp);
+            redCells.add(temp);
+            int xl = (int)(cellX)-1;
+            int xr = (int)(cellX)+1;
+            int yu = (int)(cellY)+1;
+            int yd = (int)(cellY)-1;
+            //deal with surrounding cells
+            cellHelper(xl+"-"+yu);
+            cellHelper(xr+"-"+yu);
+            cellHelper(xl+"-"+yd);
+            cellHelper(xr+"-"+yd);
+            return true;
+        }
+        return false;
     }
 
     private boolean updateCells(double centerX, double centerY, double edge,double tcX, double tcY, double cellX, double cellY,HashSet cellList)
@@ -144,6 +236,7 @@ public class StaticPartition {
         }
         return false;
     }
+
 
     private void cellHelper(String cell)
     {
