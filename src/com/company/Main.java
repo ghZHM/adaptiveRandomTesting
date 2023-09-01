@@ -26,26 +26,25 @@ public class Main {
         MetricsCalculator calculator = new MetricsCalculator();
 
         // Generate failure area - block
-//        double centerX = 0;
-//        double centerY = 0;
-//        double edge = 0;
-//        while (true)
-//        {
-//            centerX = myRandomInstance.random(Xmin,Xmax);
-//            centerY = myRandomInstance.random(Ymin,Ymax);
-//            double area = (Xmax-Xmin)*(Ymax-Ymin)*failureRate;
-//            edge = Math.sqrt(area);
-//            if((centerX+edge/2<=Xmax)&&(centerY+edge/2<=Ymax)&&(centerX-edge/2>=Xmin)&&(centerY-edge/2>=Ymin))
-//                break;
-//        }
-//        System.out.println("Failure area-block generated.");
+        double centerX = 0;
+        double centerY = 0;
+        double edge = 0;
+        while (true)
+        {
+            centerX = myRandomInstance.random(Xmin,Xmax);
+            centerY = myRandomInstance.random(Ymin,Ymax);
+            double area = (Xmax-Xmin)*(Ymax-Ymin)*failureRate;
+            edge = Math.sqrt(area);
+            if((centerX+edge/2<=Xmax)&&(centerY+edge/2<=Ymax)&&(centerX-edge/2>=Xmin)&&(centerY-edge/2>=Ymin))
+                break;
+        }
+        System.out.println("Failure area-block generated.");
 
         //generate failure area - strip
 
-        HashMap strip = stripGenerator();
-
-        System.out.println("Failure area-strip generated.");
-        System.out.println(strip.get("k-value")+",b1:"+strip.get("b1")+",b2:"+strip.get("b2"));
+//        HashMap strip = stripGenerator();
+//        System.out.println("Failure area-strip generated.");
+//        System.out.println(strip.get("k-value")+",b1:"+strip.get("b1")+",b2:"+strip.get("b2"));
 
         // metric storage
 
@@ -68,7 +67,7 @@ public class Main {
 
         // multiple run
         int runCount=0;
-        while(runCount<800)
+        while(runCount<5000)
         {
             System.out.println("Run No."+runCount);
             //baseline
@@ -79,8 +78,8 @@ public class Main {
             {
                 double tcX = myRandomInstance.random(Xmin,Xmax);
                 double tcY = myRandomInstance.random(Ymin,Ymax);
-//                if (updateExecutedSet(centerX, centerY, edge, baselineSet, tcX, tcY)) break;
-                if (checkStrip(baselineSet,tcX,tcY,strip)) break;
+                if (updateExecutedSet(centerX, centerY, edge, baselineSet, tcX, tcY)) break;
+//                if (checkStrip(baselineSet,tcX,tcY,strip)) break;
             }
             System.out.println("Start to build baseline.");
             while (true)
@@ -88,8 +87,8 @@ public class Main {
                 List<Double> temp= baseline.generator(Xmin,Xmax,Ymin,Ymax);
                 double tempX = temp.get(0);
                 double tempY = temp.get(1);
-//                if (!updateExecutedSet(centerX, centerY, edge, baselineSet, tempX, tempY)) break;
-                if (!checkStrip(baselineSet,tempX,tempY,strip)) break;
+                if (!updateExecutedSet(centerX, centerY, edge, baselineSet, tempX, tempY)) break;
+//                if (!checkStrip(baselineSet,tempX,tempY,strip)) break;
             }
             baselineGenerateTime.add(System.currentTimeMillis()-baselineTime);
             baselineMetricsList.add(calculator.getMetrics(baselineSet));
@@ -104,8 +103,8 @@ public class Main {
             {
                 double tcX = myRandomInstance.random(Xmin,Xmax);
                 double tcY = myRandomInstance.random(Ymin,Ymax);
-//                if (updateExecutedSet(centerX, centerY, edge, executedSet, tcX, tcY)) break;
-                if (checkStrip(executedSet,tcX,tcY,strip)) break;
+                if (updateExecutedSet(centerX, centerY, edge, executedSet, tcX, tcY)) break;
+//                if (checkStrip(executedSet,tcX,tcY,strip)) break;
             }
             System.out.println("select from candidate.");
             while(true)
@@ -114,8 +113,8 @@ public class Main {
                 List<Double> testCase = testCaseSelector.avgDistanceBased(candidate,executedSet);
                 double tcX = testCase.get(0);
                 double tcY = testCase.get(1);
-//                if (!updateExecutedSet(centerX, centerY, edge, executedSet, tcX, tcY)) break;
-                if (!checkStrip(executedSet,tcX,tcY,strip)) break;
+                if (!updateExecutedSet(centerX, centerY, edge, executedSet, tcX, tcY)) break;
+//                if (!checkStrip(executedSet,tcX,tcY,strip)) break;
             }
             // calculate and record metrics
             selectFromCandidateGenerateTime.add(System.currentTimeMillis()-curTime);
@@ -127,8 +126,8 @@ public class Main {
             System.out.println("Partitioning based strategy");
             long partitionStartTime = System.currentTimeMillis();
             StaticPartition myPartition = new StaticPartition((int)Math.sqrt(1/failureRate));
-//            HashSet<Double> executedSetPartition =  myPartition.generator(Xmin,Xmax,Ymin,Ymax,centerX,centerY,edge);
-            HashSet<Double> executedSetPartition =  myPartition.generator(Xmin,Xmax,Ymin,Ymax,strip);
+            HashSet<Double> executedSetPartition =  myPartition.generator(Xmin,Xmax,Ymin,Ymax,centerX,centerY,edge);
+//            HashSet<Double> executedSetPartition =  myPartition.generator(Xmin,Xmax,Ymin,Ymax,strip);
             partitionGenerateTime.add(System.currentTimeMillis()-partitionStartTime);
             HashMap partitionMetric = calculator.getMetrics(executedSetPartition);
             partitionMetricsList.add(partitionMetric);
@@ -138,8 +137,8 @@ public class Main {
             System.out.println("Hill Climbing");
             long hcStartTime = System.currentTimeMillis();
             HillClimbing hillClimbing = new HillClimbing(Xmin,Xmax,Ymin,Ymax);
-//            HashSet<List> executedSetSearch = hillClimbing.runHillClimbing(Xmin,Xmax,Ymin,Ymax,centerX,centerY,edge);
-            HashSet<List> executedSetSearch = hillClimbing.runHillClimbing(Xmin,Xmax,Ymin,Ymax,strip);
+            HashSet<List> executedSetSearch = hillClimbing.runHillClimbing(Xmin,Xmax,Ymin,Ymax,centerX,centerY,edge);
+//            HashSet<List> executedSetSearch = hillClimbing.runHillClimbing(Xmin,Xmax,Ymin,Ymax,strip);
             searchBasedGenerateTime.add(System.currentTimeMillis()-hcStartTime);
             searchBasedFmeasureList.add(executedSetSearch.size());
             searchBasedMetricsList.add(calculator.getMetrics(executedSetSearch));
@@ -171,7 +170,7 @@ public class Main {
     private static HashMap<String,Double> stripGenerator()
     {
         HashMap<String,Double> ret = new HashMap<>();
-        // store the generated region, k-value and b for 2 line
+        // store the generated region, k-value and b for 2 lines
 
         // randomly pick the adjacent border
         Random random = new Random();
@@ -209,6 +208,7 @@ public class Main {
                     x = myRandom.random(Xmin, Xmax);
                     y = myRandom.random(Ymin, Ymax);
                 } while (x == Xmax || x == 0 || y == Ymax || y == 0);
+                // check if input is valid
                 double k = y/(Xmax-x);
                 ret.put("k-value",k);
                 ret.put("b1",-1*x*k);
@@ -216,6 +216,7 @@ public class Main {
                 double b = 2*Xmax;
                 double c = k*Math.pow(Xmax,2)+2*area-y*(Xmax-x);
                 double b2 = (-b+Math.sqrt(Math.pow(b,2)-4*a*c))/(2*a);
+                //calculate the root
                 if((b2+k*Xmax>0&&b2+k*Xmax<Ymax))
                 {
                     ret.put("b2",b2);
@@ -230,6 +231,7 @@ public class Main {
                     ret.put("b2",b2);
                     break;
                 }
+                //check b2
             }
 
         }
@@ -246,8 +248,6 @@ public class Main {
                 ret.put("k-value",k);
                 double b1 = Ymax-k*x2;
                 ret.put("b1",b1);
-//                double b2 = Math.sqrt(k*Math.abs(2*area-(Xmax-x2)*(Ymax-y2)))+Ymax-k*Xmax;
-//                ret.put("b2",b2);
                 double a = 1/k;
                 double b = 2*(k*Xmax-Ymax)/k;
                 double c= Math.pow(k*Xmax-Ymax,2)/k+(Xmax-x2)*(Ymax-y2)+2*area;
@@ -305,6 +305,7 @@ public class Main {
         return ret;
     }
 
+    //check whether test case in failure region
     private static boolean checkStrip(HashSet<List> executedSet, double tcX, double tcY, HashMap failureRegion)
     {
         List<Double> firstCase = new LinkedList<>();
@@ -313,10 +314,10 @@ public class Main {
         executedSet.add(firstCase);
         double upper = Math.max((double) failureRegion.get("b2"), (double) failureRegion.get("b1"));
         double lower = Math.min((double) failureRegion.get("b2"), (double) failureRegion.get("b1"));
-
         double k = (double)failureRegion.get("k-value");
         upper+= k*tcX;
         lower+= k*tcX;
+        // calculate the border
         if(tcY>=lower&&tcY<=upper)
         {
             return true;
